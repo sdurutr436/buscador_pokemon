@@ -37,7 +37,7 @@ async function buscarPokemon() {
     try {
         const respuesta = await fetch(url + busqueda); // Realizar la solicitud a la API
         if (!respuesta.ok) {
-            return mostrarError(respuesta + " no existe");
+            return mostrarError("No existe un pokemon asi");
         }
 
         const datosPokemon = await respuesta.json(); // Parsear la respuesta JSON
@@ -48,7 +48,7 @@ async function buscarPokemon() {
         seccionResult.innerHTML = generarCartaPokemon(nombrePokemon, imagenPokemon, tiposPokemon);
 
     } catch (error) {
-        return mostrarError(respuesta + " no existe");
+        return mostrarError("No existe un pokemon asi");
     }
 
 }

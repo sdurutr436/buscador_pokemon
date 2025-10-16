@@ -25,19 +25,25 @@ function pintarPokemonsEnContenedor(arrayPokemons) {
     }
 }
 
-// Función que genera la carta de cada pokémon
 function generarCartaPokemon(datosPokemon) {
     const nombrePokemon = datosPokemon.name;
     const imagenPokemon = datosPokemon.sprites.other["official-artwork"].front_default;
-    const tiposPokemon = datosPokemon.types.map(tipo => tipo.type.name).join(" - ");
+
+    // Crea los spans de tipo, con clase según el tipo
+    const tiposPokemon = datosPokemon.types.map(tipoObj => {
+        const tipo = tipoObj.type.name;
+        return `<span class="pokemon-type tipo-${tipo}">${tipo}</span>`;
+    }).join(" ");
+
     return `
         <article class="pokemon-card">
             <h2 class="pokemon-name">${nombrePokemon}</h2>
             <img src="${imagenPokemon}" alt="${nombrePokemon}" class="pokemon-image">
-            <p class="pokemon-types"><strong>Tipos:</strong> ${tiposPokemon}</p>
+            <p class="pokemon-types">${tiposPokemon}</p>
         </article>
     `;
 }
+
 
 // Función para mostrar errores
 function mostrarError(msg) {
@@ -48,7 +54,7 @@ function mostrarError(msg) {
 async function cargarTodosPokemon() {
     seccionResult.innerHTML = "Cargando todos los Pokémon...";
     gestionError.innerHTML = "";
-    const pkmnTotal = await fetch("https://pokeapi.co/api/v2/pokemon?limit=100"); 
+    const pkmnTotal = await fetch("https://pokeapi.co/api/v2/pokemon?limit=2000"); 
     const datos = await pkmnTotal.json();
     listaPokemons = datos.results;
 

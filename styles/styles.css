@@ -67,4 +67,39 @@ section {
     margin-bottom: 8px;
 }
 
+.pokemon-type {
+    display: inline-block;
+    padding: 6px 16px;
+    margin: 3px 6px;
+    font-size: 16px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: bold;
+    background: #ccc;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+}
+
+
+.tipo-steel {background: #60a1b8}
+.tipo-water {background: #2980ef;}
+.tipo-bug {background: #91a119;}
+.tipo-dragon {background: #5061e1;}
+.tipo-electric {background: #fac000;}
+.tipo-ghost {background: #704170;}
+.tipo-fire {background: #e62829;}
+.tipo-fairy {background: #ef71ef;}
+.tipo-ice {background: #3fd8ff;}
+.tipo-fighting {background: #ff8000;}
+.tipo-normal {background: #9fa19f;}
+.tipo-grass {background-color: #3fa129;}
+.tipo-psychic {background: #ef4179;}
+.tipo-rock {background: #afa981;}
+.tipo-dark {background: #50413f;}
+.tipo-ground {background: #915121;}
+.tipo-poison {background: #8f41cb;}
+.tipo-flying {background: #81b9ef;}
+
 

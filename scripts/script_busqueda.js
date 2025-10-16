@@ -28,7 +28,7 @@ function pintarPokemonsEnContenedor(arrayPokemons) {
 // Función que genera la carta de cada pokémon
 function generarCartaPokemon(datosPokemon) {
     const nombrePokemon = datosPokemon.name;
-    const imagenPokemon = datosPokemon.sprites.front_default;
+    const imagenPokemon = datosPokemon.sprites.other["official-artwork"].front_default;
     const tiposPokemon = datosPokemon.types.map(tipo => tipo.type.name).join(" - ");
     return `
         <article class="pokemon-card">
@@ -48,7 +48,7 @@ function mostrarError(msg) {
 async function cargarTodosPokemon() {
     seccionResult.innerHTML = "Cargando todos los Pokémon...";
     gestionError.innerHTML = "";
-    const pkmnTotal = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1024"); 
+    const pkmnTotal = await fetch("https://pokeapi.co/api/v2/pokemon?limit=100"); 
     const datos = await pkmnTotal.json();
     listaPokemons = datos.results;
 

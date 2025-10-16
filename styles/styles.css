@@ -37,13 +37,13 @@ section {
 
 .result-section {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
     grid-template-columns: repeat(6, minmax(180px, 1fr));
     gap: 16px;
     justify-items: center;
     align-items: stretch;
     padding: 20px;
     text-transform: capitalize;
+    overflow-x: auto;
 }
 
 .pokemon-card {

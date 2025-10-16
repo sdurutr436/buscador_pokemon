@@ -4,37 +4,51 @@
  * La variable seccionBusqueda hace referencia a la sección donde se mostrarán los resultados de la búsqueda.
 */
 
-const url = "https://pokeapi.co/api/v2/";
+const url = "https://pokeapi.co/api/v2/pokemon/";
 const seccionBuscador = document.getElementById("pokemonNameInput");
 const seccionResult = document.getElementById("pokemonResult");
 seccionBuscador.addEventListener("input", buscarPokemon);
 
-// Funcion que toma el nombre del pokemon ingresado y realiza la búsqueda en la API
+let offsetScrollInf = 0;
+const limiteInicial = 20;
+let cargarPokemon = false;
+let scrollInf = true;
+
+// Función para evitar repetir código a la hora de obtener un pokemon.
+function generarCartaPokemon(nombrePokemon, imagenPokemon, tiposPokemon) {
+    return `
+        <article class="pokemon-card">
+            <h2 class="pokemon-name">${nombrePokemon}</h2>
+            <img src="${imagenPokemon}" alt="${nombrePokemon}" class="pokemon-image">
+            <p class="pokemon-types"><strong>Tipos:</strong> ${tiposPokemon}</p>
+        </article>
+    `;
+}
+
+// Función para la gestión de errores
+function mostrarError(msg) {
+    gestionError.innerHTML = `<p>${msg}</p>`
+}
 
 async function buscarPokemon() {
+
     const busqueda = seccionBuscador.value.toLowerCase().trim(); // Convertir a minúsculas y eliminar espacios en blanco
 
     try {
-        const respuesta = await fetch(url + "pokemon/" + busqueda); // Realizar la solicitud a la API
+        const respuesta = await fetch(url + busqueda); // Realizar la solicitud a la API
         if (!respuesta.ok) {
-            return;
+            return mostrarError(respuesta + " no existe");
         }
 
         const datosPokemon = await respuesta.json(); // Parsear la respuesta JSON
         const nombrePokemon = datosPokemon.name;
         const imagenPokemon = datosPokemon.sprites.other.home.front_default;
-        const tiposPokemon = datosPokemon.types.map(tipo => tipo.type.name).join(", ");
+        const tiposPokemon = datosPokemon.types.map(tipo => tipo.type.name).join(" - ");
 
-        seccionResult.innerHTML = `
-            <article class="pokemon-card">
-                <h2 class="pokemon-name">${nombrePokemon}</h2>
-                <img src="${imagenPokemon}" alt="${nombrePokemon}" class="pokemon-image">
-                <p class="pokemon-types"><strong>Tipos:</strong> ${tiposPokemon}</p>
-            </article>
-        `;
+        seccionResult.innerHTML = generarCartaPokemon(nombrePokemon, imagenPokemon, tiposPokemon);
 
     } catch (error) {
-        return;
+        return mostrarError(respuesta + " no existe");
     }
 
 }

@@ -35,3 +35,15 @@ section {
     margin-top: 30px;
 }
 
+.result-section {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    justify-items: center;
+    align-items: stretch;
+    padding: 20px;
+    text-transform: capitalize;
+}
+
+
+

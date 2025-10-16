@@ -45,5 +45,25 @@ section {
     text-transform: capitalize;
 }
 
+.pokemon-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 0;
+    padding: 16px;
+    width: 100%;
+    max-width: 220px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+.pokemon-card:hover {
+    transform: translateY(-4px) scale(1.03);
+}
+.pokemon-image {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
 
 

@@ -10,6 +10,8 @@ const gestionError = document.getElementById("gestionError");
 let listaPokemons = [];
 let listaDetalles = [];
 
+// ---- FUNCIONES UTILITARIAS ----
+
 // Función para renderizar cartas reutilizable
 function pintarPokemonsEnContenedor(arrayPokemons) {
     let html = "";
@@ -25,30 +27,60 @@ function pintarPokemonsEnContenedor(arrayPokemons) {
     }
 }
 
+// Función que genera el pequeño bloque de la pequeña carta pkmn
 function generarCartaPokemon(datosPokemon) {
+    const idPokemon = datosPokemon.id;
     const nombrePokemon = datosPokemon.name;
+    const tiposPokemon = generarSpansTipos(datosPokemon.types);
     const imagenPokemon = datosPokemon.sprites.other["official-artwork"].front_default;
 
-    // Crea los spans de tipo, con clase según el tipo
-    const tiposPokemon = datosPokemon.types.map(tipoObj => {
-        const tipo = tipoObj.type.name;
-        return `<span class="pokemon-type tipo-${tipo}">${tipo}</span>`;
-    }).join(" ");
-
     return `
-        <article class="pokemon-card">
-            <h2 class="pokemon-name">${nombrePokemon}</h2>
-            <img src="${imagenPokemon}" alt="${nombrePokemon}" class="pokemon-image">
-            <p class="pokemon-types">${tiposPokemon}</p>
-        </article>
+    <article class="pokemon-card" data-id="${idPokemon}" onclick="">
+    <h2 class="pokemon-name">${nombrePokemon}</h2>
+    <img src="${imagenPokemon}" alt="${nombrePokemon}" class="pokemon-image">
+    <p class="pokemon-types">${tiposPokemon}</p>
+    </article>
     `;
 }
 
+// Crea los spans de tipo, con clase según el tipo
+function generarSpansTipos(typesArray) {
+  return typesArray.map(tipoObj => {
+    const tipo = tipoObj.type.name;
+    return `<span class="pokemon-type tipo-${tipo}">${tipo}</span>`;
+  }).join(" ");
+}
+
+function mostrarDetallesPkmn(datosPkmn) {
+
+    return `<section id="modalPokemon" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">X</button>
+            <h2>Nombre del Pokémon</h2>
+                <div class="tipos-pkmn">[spans con tipos]</div>
+                <div class="gallery-sprites">
+                    <!-- Aquí van todas las imágenes del Pokémon -->
+                </div>
+                <div class="games-list">
+                <h3>Juegos en los que aparece</h3>
+                <ul>
+                    <!-- Items con nombres de los juegos -->
+                </ul>
+            </div>
+            <!-- Puedes añadir más detalles si quieres -->
+        </div>
+    </section>
+    <div class="overlay"></div>
+    `
+}
+
+// ---- FIN BLOQUE FUNCIONES UTILITARIAS ----
 
 // Función para mostrar errores
 function mostrarError(msg) {
     gestionError.innerHTML = `<p>${msg}</p>`;
 }
+
 
 // Carga y pinta todos los pokémon al iniciar
 async function cargarTodosPokemon() {
@@ -83,6 +115,14 @@ function buscarPokemon() {
 }
 
 seccionBuscador.addEventListener("input", buscarPokemon);
+
+seccionResult.addEventListener("click", function(event) {
+    const card = event.target.closest('.pokemon-card');
+    if (card) {
+        const id = card.getAttribute('data-id');
+        mostrarDetallesPkmn(id);
+    }
+})
 
 // Ejecuta la carga al iniciar la página
 window.addEventListener("DOMContentLoaded", cargarTodosPokemon);

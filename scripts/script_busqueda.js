@@ -7,10 +7,12 @@
 const seccionBuscador = document.querySelector("#pokemonNameInput");
 const seccionResult = document.getElementById("pokemonResult");
 const gestionError = document.getElementById("gestionError");
+const modal = document.getElementById("modalPokemon");
+const overlay = document.getElementById("modalOverlay");
 let listaPokemons = [];
 let listaDetalles = [];
 
-// ---- FUNCIONES UTILITARIAS ----
+// ---- FUNCIONES UTILITARIAS ---- //
 
 // Función para renderizar cartas reutilizable
 function pintarPokemonsEnContenedor(arrayPokemons) {
@@ -29,13 +31,13 @@ function pintarPokemonsEnContenedor(arrayPokemons) {
 
 // Función que genera el pequeño bloque de la pequeña carta pkmn
 function generarCartaPokemon(datosPokemon) {
-    const idPokemon = datosPokemon.id;
-    const nombrePokemon = datosPokemon.name;
-    const tiposPokemon = generarSpansTipos(datosPokemon.types);
-    const imagenPokemon = datosPokemon.sprites.other["official-artwork"].front_default;
+    let idPokemon = datosPokemon.id;
+    let nombrePokemon = datosPokemon.name;
+    let tiposPokemon = generarSpansTipos(datosPokemon.types);
+    let imagenPokemon = datosPokemon.sprites.other["official-artwork"].front_default;
 
     return `
-    <article class="pokemon-card" data-id="${idPokemon}" onclick="">
+    <article class="pokemon-card" data-id="${idPokemon}">
     <h2 class="pokemon-name">${nombrePokemon}</h2>
     <img src="${imagenPokemon}" alt="${nombrePokemon}" class="pokemon-image">
     <p class="pokemon-types">${tiposPokemon}</p>
@@ -46,53 +48,84 @@ function generarCartaPokemon(datosPokemon) {
 // Crea los spans de tipo, con clase según el tipo
 function generarSpansTipos(typesArray) {
   return typesArray.map(tipoObj => {
-    const tipo = tipoObj.type.name;
+    let tipo = tipoObj.type.name;
     return `<span class="pokemon-type tipo-${tipo}">${tipo}</span>`;
   }).join(" ");
 }
 
 function mostrarDetallesPkmn(datosPkmn) {
+    let nombrePkmn = datosPkmn.name;
+    let tiposHTML = generarSpansTipos(datosPkmn.types);
 
-    return `<section id="modalPokemon" class="modal">
-        <div class="modal-content">
-            <button class="close-modal">X</button>
-            <h2>Nombre del Pokémon</h2>
-                <div class="tipos-pkmn">[spans con tipos]</div>
-                <div class="gallery-sprites">
-                    <!-- Aquí van todas las imágenes del Pokémon -->
-                </div>
-                <div class="games-list">
-                <h3>Juegos en los que aparece</h3>
-                <ul>
-                    <!-- Items con nombres de los juegos -->
-                </ul>
-            </div>
-            <!-- Puedes añadir más detalles si quieres -->
+    const spriteOficial = datosPkmn.sprites.other['official-artwork'].front_default;
+    const spriteFrontShiny = datosPkmn.sprites.other['official-artwork'].front_shiny;
+
+    const sprites = [
+        spriteOficial,
+        spriteFrontShiny,
+    ].filter(url => url);
+
+    const numeroPokedex = datosPkmn.id;
+    const altura = datosPkmn.height / 10;
+    const peso = datosPkmn.weight / 10;
+
+    const htmlModal = `
+    <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        <div class="modal-header">
+        <h2 class="modal-nombre">${nombrePkmn}</h2>
+        <span class="modal-pokedex">N.º ${numeroPokedex}</span>
         </div>
-    </section>
-    <div class="overlay"></div>
-    `
+        <div class="modal-types">${tiposHTML}</div>
+        <div class="modal-sprites">
+        <h3>Sprites</h3>
+        <div class="gallery-sprites">
+            ${sprites.map(url => `<img src="${url}" class="modal-sprite" alt="sprite ${nombrePkmn}">`).join("")}
+        </div>
+        </div>
+        <div class="modal-metrics">
+        <h3>Datos</h3>
+        <ul>
+            <li><strong>Altura:</strong> ${altura} m</li>
+            <li><strong>Peso:</strong> ${peso} kg</li>
+        </ul>
+        </div>
+    </div>
+    `;
+
+    modal.innerHTML = htmlModal;
+    modal.classList.remove("oculto");
+    overlay.classList.remove("oculto");
+    
+    // Añadir listeners para cerrar
+    modal.querySelector('.close-modal').onclick = cerrarModal;
+    overlay.onclick = cerrarModal;
 }
 
-// ---- FIN BLOQUE FUNCIONES UTILITARIAS ----
+// ---- FIN BLOQUE FUNCIONES UTILITARIAS ---- //
 
 // Función para mostrar errores
 function mostrarError(msg) {
     gestionError.innerHTML = `<p>${msg}</p>`;
 }
 
+// Función para cerrar modal
+function cerrarModal() {
+    modal.classList.add('oculto');
+    overlay.classList.add('oculto');
+}
 
 // Carga y pinta todos los pokémon al iniciar
 async function cargarTodosPokemon() {
     seccionResult.innerHTML = "Cargando todos los Pokémon...";
     gestionError.innerHTML = "";
-    const pkmnTotal = await fetch("https://pokeapi.co/api/v2/pokemon?limit=2000"); 
+    const pkmnTotal = await fetch("https://pokeapi.co/api/v2/pokemon?limit=3000"); 
     const datos = await pkmnTotal.json();
     listaPokemons = datos.results;
 
     // Obtener detalles de todos los pokémon (PUEDE TARDAR)
     listaDetalles = [];
-    for (const pokemon of listaPokemons) {
+    for (let pokemon of listaPokemons) {
         let respuesta = await fetch(pokemon.url);
         let detallesPkmn = await respuesta.json();
         listaDetalles.push(detallesPkmn);
@@ -108,7 +141,7 @@ function buscarPokemon() {
         return;
     }
     // Filtra los detalles completos por coincidencia de nombre
-    const filtrados = listaDetalles.filter(pokemon => 
+    let filtrados = listaDetalles.filter(pokemon => 
         pokemon.name.toLowerCase().includes(busqueda)
     );
     pintarPokemonsEnContenedor(filtrados);
@@ -117,12 +150,16 @@ function buscarPokemon() {
 seccionBuscador.addEventListener("input", buscarPokemon);
 
 seccionResult.addEventListener("click", function(event) {
-    const card = event.target.closest('.pokemon-card');
+    let card = event.target.closest('.pokemon-card');
     if (card) {
-        const id = card.getAttribute('data-id');
-        mostrarDetallesPkmn(id);
+        let id = card.getAttribute('data-id');
+        // Buscar el objeto completo y pasarlo a la función
+        let detalles = listaDetalles.find(pkmn => String(pkmn.id) === String(id));
+        if (detalles) {
+            mostrarDetallesPkmn(detalles);
+        }
     }
-})
+});
 
 // Ejecuta la carga al iniciar la página
 window.addEventListener("DOMContentLoaded", cargarTodosPokemon);
